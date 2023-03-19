@@ -1,0 +1,62 @@
+.Homepage {
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+
+  h1 {
+    margin-top: 1em;
+  }
+}
+
+.table {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: black;
+  border-spacing: 0;
+  thead {
+    th {
+      text-align: start;
+      background-color: black;
+      padding: 10px 0;
+      &:first-child {
+        text-align: center;
+      }
+    }
+  }
+
+  th {
+    text-align: start;
+  }
+
+  tr:nth-child(2n) {
+    background-color: #262627;
+  }
+
+  td {
+    text-align: start;
+    padding: 0.3em 0;
+  }
+
+  .item-rank {
+    text-align: center;
+  }
+
+  .item-name {
+    font-size: 1.1rem;
+
+    a {
+      cursor: pointer;
+      color: white;
+      text-decoration-color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        color: var(--clr-green);
+      }
+    }
+  }
+  .item-symbol {
+    color: lightgray;
+    font-size: 0.8rem;
+  }
+}

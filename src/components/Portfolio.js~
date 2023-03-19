@@ -1,0 +1,196 @@
+import { useState, useEffect } from "react";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import React from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+const Portfolio = (props) => {
+  const { resetInput, handleInputChange, values, featured, cryptoReq } = props;
+
+  const [addedCryptos, setAddedCryptos] = useState([]);
+
+  const [unixTime, setUnixTime] = useState(0);
+
+  const [unixTime24HoursAgo, setUnixTime24HoursAgo] = useState(0);
+
+  useEffect(() => {
+    const currentTime = new Date().getTime();
+    setUnixTime(currentTime);
+    const time24HoursAgo = currentTime - 24 * 60 * 60 * 1000;
+    setUnixTime24HoursAgo(time24HoursAgo);
+  }, []);
+
+  const filtered = () =>
+    featured
+      ? featured[0].filter((crypto) => crypto.symbol === values.addcrypto)
+      : null;
+
+  useEffect(() => {
+    const storedCryptos = localStorage.getItem("addedCryptos");
+    if (storedCryptos) {
+      setAddedCryptos(JSON.parse(storedCryptos));
+    }
+  }, []);
+
+  const newthing = async (asset) => {
+    await fetch(
+      `https://api.coincap.io/v2/assets/${asset.id}/history?interval=h1&start=${unixTime24HoursAgo}&end=${unixTime}`
+    )
+      .then((resp) => resp.json())
+      .then((data) => {
+        asset.intervals = data.data.map((i) => +i.priceUsd);
+      });
+  };
+
+  useEffect(() => {
+    localStorage.setItem("addedCryptos", JSON.stringify(addedCryptos));
+  }, [addedCryptos]);
+
+  useEffect(() => {
+    addedCryptos.forEach((item) => {
+      newthing(item);
+    });
+  }, [addedCryptos]);
+
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: false,
+    },
+  };
+
+  const labels = [
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+  ];
+
+  const dataset = (asset) => {
+    return {
+      labels,
+      datasets: [
+        {
+          label: "24hr",
+          data: asset.intervals,
+          borderColor: "rgb(255, 99, 132)",
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+        },
+      ],
+    };
+  };
+
+  return (
+    <div className="Portfolio">
+      <Navbar
+        handleInputChange={handleInputChange}
+        value={values.search}
+        options={featured[0]}
+        cryptoReq={cryptoReq}
+        resetInput={resetInput}
+      />
+      <h1>Portfolio</h1>
+      <div>
+        Current Unix time: {unixTime}
+        <br />
+        Unix time 24 hours ago: {unixTime24HoursAgo}{" "}
+      </div>
+      <div className="search">
+        {" "}
+        <input
+          name="addcrypto"
+          type="search"
+          value={values.addcrypto}
+          maxLength={4}
+          onChange={handleInputChange}
+        />
+        <button
+          className="btn-add-portfolio"
+          onClick={() => {
+            newthing(filtered());
+            setTimeout(() => {
+              setAddedCryptos(addedCryptos.concat(filtered()));
+            }, 0);
+          }}
+        >
+          +
+        </button>
+      </div>
+      <div className="cont-cryptos">
+        {addedCryptos
+          ? addedCryptos.map((item) => (
+              <div className="added-crypto" key={item.id}>
+                <button onClick={() => console.log(item)}>item</button>
+                <p className="crypto-rank">{item.rank}</p>
+                <p className="crypto-name">
+                  {item.symbol} <span>{item.name}</span>
+                </p>
+                <p className="crypto-change24hr">
+                  (24Hr){Number(item.changePercent24Hr).toFixed(4)}%
+                </p>
+                <p className="crypto-marketcap">
+                  Mkt Cap {Number(item.marketCapUsd).toFixed(2)}
+                </p>
+                <p className="crypto-price">
+                  ${Number(item.priceUsd).toFixed(3)}
+                </p>
+                <button
+                  className="crypto-remove"
+                  onClick={() =>
+                    setAddedCryptos(
+                      addedCryptos.filter((i) => i.symbol !== item.symbol)
+                    )
+                  }
+                >
+                  x
+                </button>
+              </div>
+            ))
+          : ""}
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default Portfolio;

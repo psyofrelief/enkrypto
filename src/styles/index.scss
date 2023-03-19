@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;600;800&display=swap");
+
+:root {
+  --clr-green: #5bcc52;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.App {
+}
+
+body {
+  max-width: 1200px;
+  background-color: #262627;
+  margin: 0 auto;
+  font-family: "Golos Text", sans-serif;
+  padding: 0 1em;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading {
+  font-size: 3rem;
+  color: white;
+  margin: auto 0;
+  animation: loading 1s infinite linear;
+}
+
+.title {
+  color: whitesmoke;
+  font-weight: bolder;
+}
+
+li {
+  list-style: none;
+}
+
+.hide {
+  display: none;
+}
+
+.footer {
+  text-align: center;
+  padding: 0.4em 0;
+  color: whitesmoke;
+  font-size: 0.8rem;
+  margin-top: auto;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.5;
+  }
+}
