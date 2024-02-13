@@ -31,6 +31,7 @@ const Portfolio = (props) => {
     cryptoReq,
   } = props;
 
+  // Register required Chart.js components
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -38,9 +39,10 @@ const Portfolio = (props) => {
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
   );
 
+  // Configuration options for the Line chart
   const options = {
     responsive: false,
     plugins: {
@@ -60,6 +62,7 @@ const Portfolio = (props) => {
     },
   };
 
+  // Generate labels for the Line chart
   const labels = [];
 
   let date = new Date(); // get current date and time
@@ -75,6 +78,7 @@ const Portfolio = (props) => {
     date.setHours(date.getHours() - 1);
   }
 
+  // Function to create dataset for the Line chart
   const dataset = (asset) => {
     return {
       labels,

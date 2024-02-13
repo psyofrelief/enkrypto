@@ -6,22 +6,20 @@ import Portfolio from "./components/Portfolio";
 
 function App() {
   const [featured, setFeatured] = useState([]);
-
   const [values, setValues] = useState({
     search: "",
     addcrypto: "",
   });
-
   const [addedCryptos, setAddedCryptos] = useState([]);
   const [unixTime, setUnixTime] = useState(0);
-
   const [unixTime24HoursAgo, setUnixTime24HoursAgo] = useState(0);
 
   const inpAddcrypto = document.querySelector("#inp-addcrypto");
 
+  // Function to filter featured cryptocurrencies based on the input value
   const filtered = () => {
     const filteredProduct = featured[0].filter(
-      (crypto) => crypto.symbol === values.addcrypto
+      (crypto) => crypto.symbol === values.addcrypto,
     );
 
     if (filteredProduct.length) {
@@ -30,13 +28,16 @@ function App() {
 
     return false;
   };
+
+  // Function to remove a cryptocurrency from the added list
   const removeCrypto = (item) => {
     setAddedCryptos(addedCryptos.filter((i) => i.symbol !== item.symbol));
   };
 
+  // Function to add a cryptocurrency to your favourites
   const starCrypto = (asset) => {
     const starFiltered = featured[0].filter(
-      (ass) => ass.symbol === asset.symbol
+      (ass) => ass.symbol === asset.symbol,
     );
     const p = addedCryptos.filter((i) => i.symbol === starFiltered[0].symbol);
 
@@ -49,6 +50,7 @@ function App() {
     }
   };
 
+  // Effect to load added cryptocurrencies from localStorage on mount
   useEffect(() => {
     const storedCryptos = localStorage.getItem("addedCryptos");
     if (storedCryptos) {
@@ -56,10 +58,12 @@ function App() {
     }
   }, []);
 
+  // Effect to save added cryptocurrencies to localStorage when updated
   useEffect(() => {
     localStorage.setItem("addedCryptos", JSON.stringify(addedCryptos));
   }, [addedCryptos]);
 
+  // Effect to set current time and time 24 hours ago on mount
   useEffect(() => {
     const currentTime = new Date().getTime();
     setUnixTime(currentTime);
@@ -67,22 +71,25 @@ function App() {
     setUnixTime24HoursAgo(time24HoursAgo);
   }, []);
 
+  // Function to handle changes in the featured cryptocurrencies
   const handleChange = (data) => {
     setFeatured([data.data]);
   };
 
+  // Function to handle input changes
   const handleInputChange = (input) => {
     const { name, value } = input.target;
     setValues({ ...values, [name]: value.toUpperCase() });
   };
 
+  // Function to reset input values
   const resetInput = (inp) => {
     setValues({ [inp]: "" });
   };
 
+  // Function to fetch cryptocurrency data
   const apiKey = "326199e7-2e79-49c1-bf17-83428e2f745e";
   const urlFeatured = "https://api.coincap.io/v2/assets?rank=descending";
-
   const cryptoReq = async (url, func) => {
     try {
       const response = await fetch(url);
@@ -99,7 +106,7 @@ function App() {
                 Authorization: `Bearer ${apiKey}`,
                 "Content-Type": "application/json",
               },
-            }
+            },
           );
 
           const data = await resp.json();
@@ -132,6 +139,7 @@ function App() {
     }
   };
 
+  // Function to add cryptocurrency to portfolio
   const addToPort = () => {
     setTimeout(() => {
       const p = filtered()
@@ -147,6 +155,7 @@ function App() {
     }, 0);
   };
 
+  // Effect to fetch cryptocurrency data on mount
   useEffect(() => {
     cryptoReq(urlFeatured, handleChange);
   }, []);

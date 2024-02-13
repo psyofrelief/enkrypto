@@ -9,22 +9,23 @@ import "../styles/cryptodetails.scss";
 import {
   Chart as ChartJS,
   CategoryScale,
-  LinearScale,
   Title,
   PointElement,
   LineElement,
   Tooltip,
   Legend,
 } from "chart.js";
+
 import { Line } from "react-chartjs-2";
+
+// Register required Chart.js components
 ChartJS.register(
   CategoryScale,
-  LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const CryptoDetails = (props) => {
@@ -39,6 +40,7 @@ const CryptoDetails = (props) => {
     starCrypto,
   } = props;
 
+  // Get the cryptocurrency ID from the URL
   const { cryptoId } = useParams();
   const [loading, setLoading] = useState(true);
   const [crypto, setCrypto] = useState(null);
@@ -46,11 +48,13 @@ const CryptoDetails = (props) => {
 
   const apiKey = "326199e7-2e79-49c1-bf17-83428e2f745e";
 
+  // Effect to filter the cryptocurrency based on the ID
   useEffect(() => {
     let c = item ? item.filter((i) => i.symbol === cryptoId) : null;
     setCrypto(c);
   }, [item, cryptoId]);
 
+  // Effect to fetch historical data for the cryptocurrency
   useEffect(() => {
     if (crypto && loading) {
       const cryptoCopy = crypto[0];
@@ -62,7 +66,7 @@ const CryptoDetails = (props) => {
               Authorization: `Bearer ${apiKey}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         )
           .then((resp) => resp.json())
           .then((data) => {
@@ -77,6 +81,7 @@ const CryptoDetails = (props) => {
     }
   }, [crypto, cryptoId, loading, item]);
 
+  // Function to create dataset for the Line chart
   const dataset = (asset) => {
     return {
       labels,
@@ -91,6 +96,7 @@ const CryptoDetails = (props) => {
     };
   };
 
+  // Effect hook to check if the cryptocurrency is already in favourites
   useEffect(() => {
     if (crypto) {
       let filteredOption = addedCryptos.filter((i) => i.id === crypto[0].id);
@@ -103,6 +109,7 @@ const CryptoDetails = (props) => {
     }
   }, [crypto]);
 
+  // Configuration options for the line chart
   const options = {
     responsive: true,
     plugins: {
@@ -132,6 +139,7 @@ const CryptoDetails = (props) => {
     },
   };
 
+  // Generate labels for the Line chart
   const labels = [];
 
   let date = new Date(); // get current date and time
